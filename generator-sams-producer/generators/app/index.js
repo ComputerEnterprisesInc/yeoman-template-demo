@@ -37,9 +37,6 @@ export default class extends Generator {
   }
 
   writing() {
-    const src = this.sourceRoot();
-    const dest = this.destinationPath(`${this.props.name}`);
-
     //The ignore array is used to ignore files, push file names into this array that you want to ignore.
     const copyOpts = {
       globOptions: {
@@ -48,25 +45,22 @@ export default class extends Generator {
     };
 
     if (!this.props.mongodb)
-      copyOpts.globOptions.ignore.push(src + "/mongoose.js");
+      copyOpts.globOptions.ignore.push("**/mongoose.js");
 
-    this.fs.copy(src, dest, copyOpts);
-
-    const files = ["index.js", "package.json"];
-
+    // set template parameters
     const opts = {
       name: this.props.name,
       mongodb: this.props.mongodb
     };
 
-    files.forEach(file => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(`${this.props.name}/${file}`),
-        opts,
-        copyOpts
-      );
-    });
+    // copy files
+    this.fs.copyTpl(
+      this.templatePath(),
+      this.destinationPath(`${this.props.name}/`),
+      opts,
+      {},
+      copyOpts
+    );
   }
 
   // install() {
